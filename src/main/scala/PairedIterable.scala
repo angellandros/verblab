@@ -1,6 +1,6 @@
-package ir.angellandros.verblab
-
 import java.util.HashMap
+import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 	
 class PairedIterable[K, V](x: Iterable[(K, V)]) {
 	def reduceByKey(func: (V,V) => V) = {
@@ -11,6 +11,16 @@ class PairedIterable[K, V](x: Iterable[(K, V)]) {
 		}
 		map
 	}
+	
+	override def toString(): String = {	
+		def toStringEl(y: Iterable[(K, V)]): String = {
+			if(y.tail.isEmpty) y.head.toString
+			else y.head.toString + ", " + toStringEl(y.tail)
+		}
+		
+		"PairedIterable(" + toStringEl(x) + ")"
+	}
 }
 
 implicit def iterableToPairedIterable[K, V](x: Iterable[(K, V)]) = { new PairedIterable(x) }
+implicit def javaHashMapToPairedIterable[K, V](x: HashMap[K, V]) = { new PairedIterable(x.asScala) }
